@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PortalSettingsProvider } from './context/PortalSettingsContext';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Master Layout Architecture Components
 import { Sidebar } from './components/layout/Sidebar';
@@ -54,10 +55,11 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 export const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <PortalSettingsProvider>
-          <Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <PortalSettingsProvider>
+            <Routes>
             {/* Standalone Mobile-Optimized Two-Key Confirmation Screen */}
             <Route path="/confirm-admission/:token" element={<StudentConfirm />} />
 
@@ -164,6 +166,7 @@ export const App: React.FC = () => {
         </PortalSettingsProvider>
       </AuthProvider>
     </BrowserRouter>
+  </ErrorBoundary>
   );
 };
 
