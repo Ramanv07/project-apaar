@@ -99,7 +99,7 @@ export const InstitutionDashboard: React.FC = () => {
                 <span className="text-xs text-zinc-400 dark:text-zinc-500 font-normal ml-1">/ 100</span>
               </div>
             </div>
-            <StatusBadge label={institution.status.replace(/_/g, ' ')} code={institution.status} />
+            <StatusBadge label={(institution.status || 'COMPLIANT').replace(/_/g, ' ')} code={institution.status || 'COMPLIANT'} />
           </div>
         </div>
       </div>

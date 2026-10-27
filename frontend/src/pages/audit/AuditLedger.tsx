@@ -106,7 +106,7 @@ export const AuditLedger: React.FC = () => {
       cell: (r) => (
         <div>
           <div className="font-semibold text-zinc-950 dark:text-white">{r.username}</div>
-          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">{r.role.replace(/_/g, ' ')}</div>
+          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">{(r.role || 'SYSTEM').replace(/_/g, ' ')}</div>
         </div>
       )
     },
@@ -185,7 +185,7 @@ export const AuditLedger: React.FC = () => {
       header: 'Purpose Tag',
       accessorKey: 'purpose',
       sortable: true,
-      cell: (r) => <StatusBadge label={r.purpose.replace(/_/g, ' ')} variant="slate" />
+      cell: (r) => <StatusBadge label={(r.purpose || 'STATUTORY_AUDIT').replace(/_/g, ' ')} variant="slate" />
     },
     {
       header: 'Status',

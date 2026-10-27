@@ -220,7 +220,7 @@ export const PublicVerify: React.FC = () => {
                       <tr key={idx} className="hover:bg-zinc-50 dark:hover:bg-[#1f2128]">
                         <td className="px-4 py-2.5 text-zinc-500 dark:text-zinc-400">{new Date(v.timestamp).toLocaleString()}</td>
                         <td className="px-4 py-2.5 font-semibold text-zinc-900 dark:text-zinc-100 font-sans">{v.verifier_organization}</td>
-                        <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-300 font-sans">{v.verification_purpose.replace(/_/g, ' ')}</td>
+                        <td className="px-4 py-2.5 text-zinc-600 dark:text-zinc-300 font-sans">{(v.verification_purpose || 'CREDENTIAL_CHECK').replace(/_/g, ' ')}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -31,10 +31,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('trustseat_user');
     if (savedUser && token) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsed = JSON.parse(savedUser);
+        if (parsed && typeof parsed === 'object') {
+          if (!parsed.role) parsed.role = 'AICTE_ADMIN';
+          setUser(parsed);
+        } else {
+          setUser(null);
+        }
       } catch {
         localStorage.removeItem('trustseat_user');
         localStorage.removeItem('trustseat_token');
+        setUser(null);
       }
     }
     setIsLoading(false);

@@ -133,7 +133,7 @@ export const StudentList: React.FC = () => {
       header: 'Two-Key Status',
       accessorKey: 'two_key_status',
       sortable: true,
-      cell: (r) => <StatusBadge label={r.two_key_status.replace(/_/g, ' ')} code={r.two_key_status} />
+      cell: (r) => <StatusBadge label={(r.two_key_status || 'SUBMITTED').replace(/_/g, ' ')} code={r.two_key_status || 'SUBMITTED'} />
     },
     {
       header: 'Verification Link & Cert',

@@ -358,14 +358,14 @@ const FALLBACK_GRAPH: GraphData = {
                   <span className="text-xs text-zinc-400 dark:text-zinc-500">/ 100</span>
                 </div>
               </div>
-              <StatusBadge label={reviewScore.status.replace(/_/g, ' ')} code={reviewScore.status} />
+              <StatusBadge label={(reviewScore.status || 'UNDER_REVIEW').replace(/_/g, ' ')} code={reviewScore.status || 'UNDER_REVIEW'} />
             </div>
           </div>
 
           {/* Plain Language Reasons List */}
           <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
             <div style={{ fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-              Specific Flagged Indicators ({reviewScore.reasons.length}):
+              Specific Flagged Indicators ({(reviewScore.reasons || []).length}):
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {reviewScore.reasons.map((r, idx) => (

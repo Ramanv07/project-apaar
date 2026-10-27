@@ -40,13 +40,13 @@ export const PortalHeader: React.FC = () => {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-              <span className="user-badge">{user.role.replace(/_/g, ' ')}</span>
+              <span className="user-badge">{(user?.role || 'AICTE_ADMIN').replace(/_/g, ' ')}</span>
               
               {/* Evaluator Quick Role Switcher */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <span style={{ fontSize: '10px', color: '#cbd5e1' }}>Demo Role:</span>
                 <select
-                  value={user.role}
+                  value={user?.role || 'AICTE_ADMIN'}
                   onChange={handleRoleChange}
                   style={{
                     fontSize: '11px',

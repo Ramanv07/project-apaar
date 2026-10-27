@@ -40,7 +40,7 @@ export const FloatingPillHeader: React.FC = () => {
             <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 dark:bg-[#111215] border border-zinc-200/70 dark:border-zinc-800 text-xs">
               <span className="text-[10px] text-zinc-400 uppercase tracking-wider font-semibold">Role:</span>
               <select
-                value={user.role}
+                value={user.role || 'AICTE_ADMIN'}
                 onChange={handleRoleChange}
                 className="bg-transparent text-xs font-semibold text-zinc-800 dark:text-zinc-200 border-none outline-none cursor-pointer pr-1 py-0.5"
                 title="Switch demo role instantly"
@@ -76,7 +76,7 @@ export const FloatingPillHeader: React.FC = () => {
                   {user.full_name || user.username}
                 </p>
                 <p className="text-[10px] text-zinc-400 capitalize truncate max-w-[140px]">
-                  {user.role.replace(/_/g, ' ').toLowerCase()}
+                  {(user.role || 'AICTE_ADMIN').replace(/_/g, ' ').toLowerCase()}
                 </p>
               </div>
             </div>

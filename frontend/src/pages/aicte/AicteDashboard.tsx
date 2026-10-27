@@ -247,7 +247,7 @@ export const AicteDashboard: React.FC = () => {
       header: 'Regulatory Status',
       accessorKey: 'status',
       sortable: true,
-      cell: (row) => <StatusBadge label={row.status.replace(/_/g, ' ')} code={row.status} />
+      cell: (row) => <StatusBadge label={(row.status || 'COMPLIANT').replace(/_/g, ' ')} code={row.status || 'COMPLIANT'} />
     },
     {
       header: 'Audit Action',

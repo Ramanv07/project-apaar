@@ -103,7 +103,7 @@ export const StudentConfirm: React.FC = () => {
                 <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Enrolment State</div>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>Ref: {admission.record_ref}</div>
               </div>
-              <StatusBadge label={admission.two_key_status.replace(/_/g, ' ')} code={admission.two_key_status} />
+              <StatusBadge label={(admission.two_key_status || 'SUBMITTED').replace(/_/g, ' ')} code={admission.two_key_status || 'SUBMITTED'} />
             </div>
 
             {actionDone && (

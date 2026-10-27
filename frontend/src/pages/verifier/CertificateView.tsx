@@ -140,7 +140,7 @@ export const CertificateView: React.FC = () => {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontSize: '13px', fontWeight: 600, marginTop: '12px' }}>
             <CheckCircle size={16} />
-            <span>Two-Key Authentication State: {cert.two_key_status.replace(/_/g, ' ')}</span>
+            <span>Two-Key Authentication State: {(cert?.two_key_status || 'STUDENT_CONFIRMED').replace(/_/g, ' ')}</span>
           </div>
         </div>
 
