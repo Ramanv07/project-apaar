@@ -64,13 +64,21 @@ export const StudentList: React.FC = () => {
       header: 'Record Reference',
       accessorKey: 'record_ref',
       sortable: true,
-      cell: (r) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{r.record_ref}</span>
+      cell: (r) => (
+        <span className="font-mono font-semibold text-xs text-sky-600 dark:text-sky-400">
+          {r.record_ref}
+        </span>
+      )
     },
     {
       header: 'APAAR ID',
       accessorKey: 'apaar_id',
       sortable: true,
-      cell: (r) => <span style={{ fontFamily: 'monospace' }}>{r.apaar_id}</span>
+      cell: (r) => (
+        <span className="font-mono text-xs text-zinc-800 dark:text-zinc-200">
+          {r.apaar_id}
+        </span>
+      )
     },
     {
       header: 'Student Name',
@@ -78,8 +86,12 @@ export const StudentList: React.FC = () => {
       sortable: true,
       cell: (r) => (
         <div>
-          <div style={{ fontWeight: 600, color: '#1e293b' }}>{r.student_name}</div>
-          <div style={{ fontSize: '11px', color: '#64748b' }}>Roll: {r.student_id_enrolment}</div>
+          <div className="font-semibold text-zinc-950 dark:text-white tracking-tight">
+            {r.student_name}
+          </div>
+          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono mt-0.5">
+            Roll: {r.student_id_enrolment}
+          </div>
         </div>
       )
     },
@@ -89,8 +101,10 @@ export const StudentList: React.FC = () => {
       sortable: true,
       cell: (r) => (
         <div>
-          <div style={{ fontSize: '12px' }}>{r.course_name}</div>
-          <div style={{ fontSize: '11px', color: '#64748b' }}>Adm: {r.admission_date} ({r.year_of_admission})</div>
+          <div className="font-medium text-zinc-900 dark:text-zinc-100">{r.course_name}</div>
+          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono mt-0.5">
+            Adm: {r.admission_date} ({r.year_of_admission})
+          </div>
         </div>
       )
     },
@@ -98,19 +112,20 @@ export const StudentList: React.FC = () => {
       header: 'Category / Quota',
       sortable: true,
       cell: (r) => (
-        <div>
-          <span className="status-badge slate">{r.category}</span>
-          <span style={{ margin: '0 4px', fontSize: '11px' }}>•</span>
-          <span style={{ fontSize: '11px', fontWeight: 600, color: '#0f4c81' }}>{r.quota_type}</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <StatusBadge label={r.category} variant="slate" />
+          <span className="text-[11px] font-mono font-semibold text-sky-600 dark:text-sky-400">
+            {r.quota_type}
+          </span>
         </div>
       )
     },
     {
       header: 'Contact Masked',
       cell: (r) => (
-        <div style={{ fontSize: '11px', fontFamily: 'monospace' }}>
+        <div className="text-[11px] font-mono text-zinc-700 dark:text-zinc-300">
           <div>{r.mobile_masked}</div>
-          <div style={{ color: '#64748b' }}>{r.email_masked}</div>
+          <div className="text-zinc-400 dark:text-zinc-500">{r.email_masked}</div>
         </div>
       )
     },
@@ -123,23 +138,23 @@ export const StudentList: React.FC = () => {
     {
       header: 'Verification Link & Cert',
       cell: (r) => (
-        <div style={{ display: 'flex', gap: '4px' }}>
+        <div className="flex items-center gap-2">
           <a
             href={`/confirm-admission/${r.confirmation_token}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold transition-colors"
             title="Open simulated Key-2 student confirmation screen"
           >
-            <ExternalLink size={12} />
-            <span>Key-2 Link</span>
+            <ExternalLink className="w-3.5 h-3.5 text-sky-500" />
+            <span>Key-2</span>
           </a>
           <button
             onClick={() => navigate(`/certificate?ref=${r.record_ref}`)}
-            className="btn btn-secondary btn-sm"
+            className="p-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] transition-colors"
             title="View Official Certificate Template"
           >
-            <Award size={12} />
+            <Award className="w-3.5 h-3.5 text-amber-500" />
           </button>
         </div>
       )
@@ -147,28 +162,28 @@ export const StudentList: React.FC = () => {
   ];
 
   return (
-    <div className="main-content-wrapper">
-      <div className="page-header-row">
-        <div>
-          <h1 className="page-title">Enrolment Ledger & Admission Records</h1>
-          <p className="page-subtitle">
-            Dense Master Registry of APAAR Admissions, Two-Key Authentication State, and Masked Identity Attributes
-          </p>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight font-display">
+          Enrolment Ledger & Admission Records
+        </h1>
+        <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          Master Registry of APAAR Admissions, Two-Key Authentication State, and Masked Identity Attributes
+        </p>
       </div>
 
       {/* Filter Bar */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Filter size={14} color="#64748b" />
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Filter:</span>
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-display">
+          <Filter className="w-3.5 h-3.5" />
+          <span>Filters:</span>
         </div>
 
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="form-select"
-          style={{ width: '220px', fontSize: '12px' }}
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
         >
           <option value="">All Two-Key States</option>
           <option value="STUDENT_CONFIRMED">Student Confirmed</option>
@@ -180,8 +195,7 @@ export const StudentList: React.FC = () => {
         <select
           value={quotaFilter}
           onChange={e => setQuotaFilter(e.target.value)}
-          className="form-select"
-          style={{ width: '180px', fontSize: '12px' }}
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
         >
           <option value="">All Quotas</option>
           <option value="GENERAL">General</option>
@@ -193,6 +207,7 @@ export const StudentList: React.FC = () => {
         </select>
       </div>
 
+      {/* Master Data Table */}
       <DataTable
         columns={columns}
         data={records}

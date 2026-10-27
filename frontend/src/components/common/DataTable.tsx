@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Download, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { Download, Search, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { exportToCSV } from '../../utils/export';
 
 export interface Column<T> {
@@ -78,15 +78,14 @@ export function DataTable<T extends Record<string, any>>({
   };
 
   return (
-    <div>
-      {/* Table Controls Row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', gap: '10px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', position: 'relative', minWidth: '280px' }}>
-          <Search size={14} style={{ position: 'absolute', left: '10px', color: '#64748b' }} />
+    <div className="space-y-3">
+      {/* Table Controls Toolbar */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="relative min-w-[280px] max-w-sm flex-1">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
-            className="form-input"
-            style={{ paddingLeft: '30px', fontSize: '12px' }}
+            className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 pl-10 pr-3.5 py-2 text-xs placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
             placeholder={searchPlaceholder}
             value={searchTerm}
             onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
@@ -94,87 +93,100 @@ export function DataTable<T extends Record<string, any>>({
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
-            Showing {Math.min(sortedData.length, (currentPage - 1) * pageSize + 1)} - {Math.min(sortedData.length, currentPage * pageSize)} of {sortedData.length} records
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-zinc-400 dark:text-zinc-500 tabular-nums font-mono">
+            {sortedData.length > 0
+              ? `${Math.min(sortedData.length, (currentPage - 1) * pageSize + 1)}-${Math.min(sortedData.length, currentPage * pageSize)} of ${sortedData.length}`
+              : '0 records'}
           </span>
-          <button onClick={handleExport} className="btn btn-secondary btn-sm" title="Download spreadsheet">
-            <Download size={13} />
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#16181d] text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold transition-colors"
+            title="Download spreadsheet"
+          >
+            <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
           </button>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="data-table-container">
-        <table className="gov-table">
-          <thead>
-            <tr>
-              {columns.map((col, idx) => (
-                <th
-                  key={idx}
-                  onClick={() => col.sortable && handleSort(col.accessorKey as string)}
-                  style={{ cursor: col.sortable ? 'pointer' : 'default', userSelect: 'none' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>{col.header}</span>
-                    {col.sortable && sortKey === col.accessorKey && (
-                      sortDirection === 'asc' ? <ChevronUp size={13} /> : <ChevronDown size={13} />
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.length === 0 ? (
+      {/* FinTech Data Table Shell */}
+      <div className="w-full overflow-hidden rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#16181d] shadow-xs transition-colors">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            {/* Table Header */}
+            <thead className="border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-[#121316] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold">
               <tr>
-                <td colSpan={columns.length} style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>
-                  No matching records found in this view.
-                </td>
+                {columns.map((col, idx) => (
+                  <th
+                    key={idx}
+                    onClick={() => col.sortable && handleSort(col.accessorKey as string)}
+                    className={`px-4 py-3.5 font-semibold text-[11px] ${col.sortable ? 'cursor-pointer select-none hover:text-zinc-900 dark:hover:text-white' : ''}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span>{col.header}</span>
+                      {col.sortable && sortKey === col.accessorKey && (
+                        sortDirection === 'asc' ? <ChevronUp className="w-3.5 h-3.5 text-sky-500" /> : <ChevronDown className="w-3.5 h-3.5 text-sky-500" />
+                      )}
+                    </div>
+                  </th>
+                ))}
               </tr>
-            ) : (
-              paginatedData.map((item, rowIdx) => (
-                <tr
-                  key={rowIdx}
-                  onClick={() => onRowClick && onRowClick(item)}
-                  style={{ cursor: onRowClick ? 'pointer' : 'default' }}
-                >
-                  {columns.map((col, colIdx) => (
-                    <td key={colIdx}>
-                      {col.cell
-                        ? col.cell(item)
-                        : col.accessorKey
-                        ? String(item[col.accessorKey] ?? '—')
-                        : '—'}
-                    </td>
-                  ))}
+            </thead>
+
+            {/* Table Body */}
+            <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-zinc-800 dark:text-zinc-200 font-normal">
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="text-center py-10 text-zinc-400 dark:text-zinc-500 text-xs">
+                    No matching records found in this view.
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                paginatedData.map((item, rowIdx) => (
+                  <tr
+                    key={rowIdx}
+                    onClick={() => onRowClick && onRowClick(item)}
+                    className={`hover:bg-zinc-50 dark:hover:bg-[#1f2128] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                  >
+                    {columns.map((col, colIdx) => (
+                      <td key={colIdx} className="px-4 py-3.5 whitespace-nowrap text-zinc-700 dark:text-zinc-300">
+                        {col.cell
+                          ? col.cell(item)
+                          : col.accessorKey
+                          ? String(item[col.accessorKey] ?? '—')
+                          : '—'}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+        <div className="flex justify-end items-center gap-2 pt-1">
           <button
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#16181d] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
           >
-            Previous
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Previous</span>
           </button>
-          <span style={{ fontSize: '12px', margin: '0 6px', color: '#475569' }}>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 font-mono px-2">
             Page {currentPage} of {totalPages}
           </span>
           <button
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#16181d] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
           >
-            Next
+            <span>Next</span>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       )}

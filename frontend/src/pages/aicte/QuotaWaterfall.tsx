@@ -61,7 +61,6 @@ export const QuotaWaterfall: React.FC = () => {
     setSimulating(true);
     try {
       const res = await api.post('/quota/simulate-what-if', {
-        policy_version_code: selectedPolicy,
         supernumerary_cap_percent: superPercent,
         nri_quota_percent: nriPercent,
         allow_tfw_cascade_to_nri: cascadeTfw
@@ -92,30 +91,30 @@ export const QuotaWaterfall: React.FC = () => {
   const activePolicyData = policies.find(p => p.version_code === selectedPolicy);
 
   return (
-    <div className="main-content-wrapper">
-      <div className="page-header-row">
-        <div>
-          <h1 className="page-title">Quota Waterfall Engine & Policy Simulator</h1>
-          <p className="page-subtitle">
-            Policy-as-Code Quota Cascade & Dynamic "What-If" Sensitivity Modelling
-          </p>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight font-display">
+          Quota Waterfall Engine & Policy Simulator
+        </h1>
+        <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          Policy-as-Code Quota Cascade & Dynamic "What-If" Sensitivity Modelling
+        </p>
       </div>
 
       {/* Policy-as-Code Version Selector */}
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px', marginBottom: '18px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <GitBranch size={16} color="#0f4c81" />
-            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <GitBranch className="w-4 h-4 text-sky-500" />
+            <h2 className="text-sm font-bold text-zinc-950 dark:text-white font-display">
               Statutory Approval Process Handbook (Policy Version in Force)
             </h2>
           </div>
           <select
             value={selectedPolicy}
             onChange={e => setSelectedPolicy(e.target.value)}
-            className="form-select"
-            style={{ width: '280px', fontWeight: 600 }}
+            className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors w-full sm:w-auto"
           >
             {policies.map(p => (
               <option key={p.version_code} value={p.version_code}>
@@ -126,120 +125,112 @@ export const QuotaWaterfall: React.FC = () => {
         </div>
 
         {activePolicyData && (
-          <div style={{ fontSize: '12px', color: '#475569', backgroundColor: '#f8fafc', padding: '10px', borderRadius: '2px', border: '1px solid #e2e8f0' }}>
-            <p><strong>Description:</strong> {activePolicyData.description}</p>
-            <p style={{ marginTop: '4px' }}>
-              <strong>Effective Period:</strong> {activePolicyData.effective_from} to {activePolicyData.effective_to || 'Present (Active Law)'}
+          <div className="bg-zinc-50 dark:bg-[#111215] p-3.5 rounded-xl border border-zinc-200/60 dark:border-zinc-800/80 text-xs text-zinc-600 dark:text-zinc-300 space-y-1">
+            <p><strong className="text-zinc-900 dark:text-white font-semibold">Description:</strong> {activePolicyData.description}</p>
+            <p>
+              <strong className="text-zinc-900 dark:text-white font-semibold">Effective Period:</strong> {activePolicyData.effective_from} to {activePolicyData.effective_to || 'Present (Active Law)'}
             </p>
           </div>
         )}
       </div>
 
       {/* Quota Waterfall Cascade Diagram */}
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px', marginBottom: '18px' }}>
-        <h2 style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors space-y-4">
+        <h2 className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-display">
           AICTE Quota Cascade Architecture
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           
-          <div style={{ border: '1px solid #cbd5e1', padding: '12px', borderRadius: '2px', backgroundColor: '#f8fafc' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f4c81' }}>1. REGULAR INTAKE</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>100% Capacity</div>
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>General, OBC, SC, ST, State Govt Allotment, Management.</div>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-1">
+            <div className="text-[11px] font-bold text-sky-600 dark:text-sky-400 font-display">1. REGULAR INTAKE</div>
+            <div className="text-base font-bold text-zinc-950 dark:text-white font-mono">100% Capacity</div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">General, OBC, SC, ST, State Govt Allotment, Management.</div>
           </div>
 
-          <div style={{ border: '1px solid #cbd5e1', padding: '12px', borderRadius: '2px', backgroundColor: '#f8fafc' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#15803d' }}>2. SUPERNUMERARY SEATS</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>+{superCap}% Cap</div>
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>EWS (10%), TFW (5%), Foreign Nationals / OCI / CIWGC (15%).</div>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-1">
+            <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 font-display">2. SUPERNUMERARY SEATS</div>
+            <div className="text-base font-bold text-zinc-950 dark:text-white font-mono">+{superCap}% Cap</div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">EWS (10%), TFW (5%), Foreign Nationals / OCI / CIWGC (15%).</div>
           </div>
 
-          <div style={{ border: '1px solid #cbd5e1', padding: '12px', borderRadius: '2px', backgroundColor: '#f8fafc' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#d97706' }}>3. VACANT CASCADE</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>CIWGC → FN → NRI</div>
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>Unfilled supernumerary seats pass to NRI ONLY in NBA accredited courses.</div>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-1">
+            <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400 font-display">3. VACANT CASCADE</div>
+            <div className="text-base font-bold text-zinc-950 dark:text-white font-mono">CIWGC → FN → NRI</div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">Unfilled supernumerary seats pass to NRI ONLY in NBA accredited courses.</div>
           </div>
 
-          <div style={{ border: '1px solid #cbd5e1', padding: '12px', borderRadius: '2px', backgroundColor: '#f8fafc' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#b91c1c' }}>4. STATUTORY CEILING</div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>Zero Breach</div>
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>Admissions above Approved + Supernumerary Cap trigger regulatory review.</div>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-1">
+            <div className="text-[11px] font-bold text-rose-600 dark:text-rose-400 font-display">4. STATUTORY CEILING</div>
+            <div className="text-base font-bold text-zinc-950 dark:text-white font-mono">Zero Breach</div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">Admissions above Approved + Supernumerary Cap trigger regulatory review.</div>
           </div>
 
         </div>
       </div>
 
       {/* Interactive "What-If" Sensitivity Controls */}
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '20px', marginBottom: '18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
-          <Sliders size={18} color="#e65100" />
-          <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1b2a49' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 sm:p-6 shadow-xs transition-colors space-y-6">
+        <div className="flex items-center gap-2.5 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+          <Sliders className="w-4 h-4 text-amber-500" />
+          <h2 className="text-sm font-bold text-zinc-950 dark:text-white font-display">
             Interactive "What-If" Policy Simulator (Council Revision Workbench)
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '20px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Slider 1: Supernumerary Cap */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
-              <span>Aggregate Supernumerary Ceiling:</span>
-              <span style={{ color: '#0f4c81', fontSize: '14px', fontWeight: 700 }}>{superCap}%</span>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-2">
+            <div className="flex justify-between items-center text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+              <span>Supernumerary Ceiling Cap:</span>
+              <span className="font-mono text-sm font-bold text-sky-600 dark:text-sky-400">{superCap}%</span>
             </div>
             <input
               type="range"
               min="10"
-              max="25"
+              max="35"
               step="1"
               value={superCap}
               onChange={e => handleSliderChange(parseFloat(e.target.value))}
-              style={{ width: '100%', cursor: 'pointer' }}
-              aria-label="Supernumerary Cap Slider"
+              className="w-full accent-sky-500 cursor-pointer"
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#64748b' }}>
-              <span>10% (Strict)</span>
-              <span>15% (2024 Rule)</span>
-              <span>20% (2025 Rule)</span>
-              <span>25% (Relaxed)</span>
-            </div>
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
+              Current APH standard is 20% (includes 10% EWS + 5% TFW + special).
+            </p>
           </div>
 
-          {/* Slider 2: NRI Sub-Quota */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, marginBottom: '6px' }}>
-              <span>Base NRI Sub-Quota Ceiling:</span>
-              <span style={{ color: '#e65100', fontSize: '14px', fontWeight: 700 }}>{nriCap}%</span>
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 space-y-2">
+            <div className="flex justify-between items-center text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+              <span>NRI Quota Cap (NBA Only):</span>
+              <span className="font-mono text-sm font-bold text-amber-600 dark:text-amber-400">{nriCap}%</span>
             </div>
             <input
               type="range"
-              min="3"
+              min="0"
               max="15"
               step="1"
               value={nriCap}
               onChange={e => handleNriChange(parseFloat(e.target.value))}
-              style={{ width: '100%', cursor: 'pointer' }}
-              aria-label="NRI Cap Slider"
+              className="w-full accent-amber-500 cursor-pointer"
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#64748b' }}>
-              <span>3% (Min)</span>
-              <span>5% (Current APH)</span>
-              <span>10%</span>
-              <span>15% (Max)</span>
-            </div>
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
+              Standard ceiling is 5% within supernumerary envelope.
+            </p>
           </div>
 
-          {/* Checkbox: TFW to NRI Cascade */}
-          <div style={{ borderLeft: '1px solid #e2e8f0', paddingLeft: '16px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>
-              <input
-                type="checkbox"
-                checked={allowTfwCascade}
-                onChange={e => handleTfwToggle(e.target.checked)}
-              />
-              <span>Allow Unfilled TFW Seats to Cascade to NRI</span>
-            </label>
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
-              Simulates experimental policy proposal.
+          <div className="bg-zinc-50 dark:bg-[#111215] p-4 rounded-xl border border-zinc-200/70 dark:border-zinc-800 flex flex-col justify-between">
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                <input
+                  type="checkbox"
+                  checked={allowTfwCascade}
+                  onChange={e => handleTfwToggle(e.target.checked)}
+                  className="rounded border-zinc-300 dark:border-zinc-700 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                />
+                <span>Allow Unfilled TFW Seats to Convert</span>
+              </label>
+              <p className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2">
+                Simulates experimental policy proposal.
+              </p>
             </div>
           </div>
 
@@ -248,85 +239,109 @@ export const QuotaWaterfall: React.FC = () => {
 
       {/* Simulation Impact Results */}
       {simulationResult && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors space-y-4">
+          <div className="flex justify-between items-center pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
+            <h3 className="text-sm font-bold text-zinc-950 dark:text-white font-display">
               National Simulation Outcome
             </h3>
-            {simulating && <span style={{ fontSize: '11px', color: '#0f4c81' }}>Re-calculating 125 programmes...</span>}
+            {simulating && (
+              <span className="text-xs font-mono text-sky-600 dark:text-sky-400 animate-pulse">
+                Re-calculating 125 programmes...
+              </span>
+            )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '16px' }}>
-            <div style={{ padding: '12px', border: '1px solid #86efac', backgroundColor: '#f0fdf4', borderRadius: '2px' }}>
-              <div style={{ fontSize: '11px', color: '#166534', fontWeight: 600 }}>SIMULATED COMPLIANT</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#15803d' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="p-4 rounded-xl border border-emerald-500/25 bg-emerald-500/10 space-y-1">
+              <div className="text-[11px] font-semibold text-emerald-700 dark:text-[#62b082] uppercase tracking-wider font-display">
+                SIMULATED COMPLIANT
+              </div>
+              <div className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">
                 {simulationResult.simulated_compliant_programmes}
               </div>
-              <div style={{ fontSize: '11px', color: '#166534' }}>
+              <div className="text-xs text-emerald-700/80 dark:text-[#62b082]/80">
                 Programmes within limits
               </div>
             </div>
 
-            <div style={{ padding: '12px', border: '1px solid #fca5a5', backgroundColor: '#fef2f2', borderRadius: '2px' }}>
-              <div style={{ fontSize: '11px', color: '#991b1b', fontWeight: 600 }}>SIMULATED NON-COMPLIANT</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#dc2626' }}>
+            <div className="p-4 rounded-xl border border-rose-500/25 bg-rose-500/10 space-y-1">
+              <div className="text-[11px] font-semibold text-rose-700 dark:text-[#c77884] uppercase tracking-wider font-display">
+                SIMULATED NON-COMPLIANT
+              </div>
+              <div className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400 tabular-nums">
                 {simulationResult.simulated_non_compliant_programmes}
               </div>
-              <div style={{ fontSize: '11px', color: '#991b1b' }}>
+              <div className="text-xs text-rose-700/80 dark:text-[#c77884]/80">
                 Exceeding proposed ceilings
               </div>
             </div>
 
-            <div style={{ padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', borderRadius: '2px' }}>
-              <div style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>NEWLY COMPLIANT</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#0f4c81' }}>
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111215] space-y-1">
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-display">
+                NEWLY COMPLIANT
+              </div>
+              <div className="text-2xl font-bold font-mono text-sky-600 dark:text-sky-400 tabular-nums">
                 +{simulationResult.newly_compliant_count}
               </div>
-              <div style={{ fontSize: '11px', color: '#64748b' }}>
+              <div className="text-xs text-zinc-400 dark:text-zinc-500">
                 Cured by relaxed ceiling
               </div>
             </div>
 
-            <div style={{ padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', borderRadius: '2px' }}>
-              <div style={{ fontSize: '11px', color: '#475569', fontWeight: 600 }}>NEWLY NON-COMPLIANT</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#d97706' }}>
-                {simulationResult.newly_non_compliant_count}
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#111215] space-y-1">
+              <div className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-display">
+                NEWLY NON-COMPLIANT
               </div>
-              <div style={{ fontSize: '11px', color: '#64748b' }}>
-                Turn non-compliant if tightened
+              <div className="text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 tabular-nums">
+                +{simulationResult.newly_non_compliant_count}
+              </div>
+              <div className="text-xs text-zinc-400 dark:text-zinc-500">
+                Pushed into breach
               </div>
             </div>
           </div>
 
           {/* Impacted Programmes List */}
           {simulationResult.impacted_programmes.length > 0 && (
-            <div>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>
-                Directly Shifted Programmes under this Simulation ({simulationResult.impacted_programmes.length}):
+            <div className="pt-2 space-y-3">
+              <div className="text-xs font-bold text-zinc-950 dark:text-white font-display">
+                Programmes with State Delta Under Simulated Scenario ({simulationResult.impacted_programmes.length}):
               </div>
-              <div className="data-table-container">
-                <table className="gov-table">
-                  <thead>
+
+              <div className="overflow-x-auto rounded-xl border border-zinc-200/60 dark:border-zinc-800/60">
+                <table className="w-full text-left text-xs">
+                  <thead className="border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-[#121316] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold text-[11px]">
                     <tr>
-                      <th>Institution</th>
-                      <th>State</th>
-                      <th>Course</th>
-                      <th>Intake</th>
-                      <th>Admissions</th>
-                      <th>Prior Status</th>
-                      <th>Simulated Status</th>
+                      <th className="px-4 py-3">Institution & State</th>
+                      <th className="px-4 py-3">Course</th>
+                      <th className="px-4 py-3">Approved / Enrolled</th>
+                      <th className="px-4 py-3">Current Status</th>
+                      <th className="px-4 py-3">Simulated Status</th>
+                      <th className="px-4 py-3">Delta Headroom</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-zinc-800 dark:text-zinc-200">
                     {simulationResult.impacted_programmes.map((p, idx) => (
-                      <tr key={idx}>
-                        <td style={{ fontWeight: 600 }}>{p.institution_name}</td>
-                        <td>{p.state}</td>
-                        <td>{p.course_name}</td>
-                        <td>{p.approved_intake}</td>
-                        <td style={{ fontWeight: 600 }}>{p.enrolled_count}</td>
-                        <td><StatusBadge label={p.prior_status} code={p.prior_status} /></td>
-                        <td><StatusBadge label={p.simulated_status} code={p.simulated_status} /></td>
+                      <tr key={idx} className="hover:bg-zinc-50 dark:hover:bg-[#1f2128] transition-colors">
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <div className="font-semibold text-zinc-950 dark:text-white">{p.institution_name}</div>
+                          <div className="text-[11px] text-zinc-400 dark:text-zinc-500">{p.state}</div>
+                        </td>
+                        <td className="px-4 py-3 font-medium whitespace-nowrap">{p.course_name}</td>
+                        <td className="px-4 py-3 font-mono tabular-nums whitespace-nowrap">
+                          {p.approved_intake} / <strong className="text-zinc-950 dark:text-white">{p.enrolled_count}</strong>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <StatusBadge label={p.prior_status} code={p.prior_status} />
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <StatusBadge label={p.simulated_status} code={p.simulated_status} />
+                        </td>
+                        <td className="px-4 py-3 font-mono tabular-nums font-bold whitespace-nowrap">
+                          <span className={p.delta_headroom >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>
+                            {p.delta_headroom >= 0 ? `+${p.delta_headroom}` : p.delta_headroom} seats
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -337,7 +352,6 @@ export const QuotaWaterfall: React.FC = () => {
 
         </div>
       )}
-
     </div>
   );
 };

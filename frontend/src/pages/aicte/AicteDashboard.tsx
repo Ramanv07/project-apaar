@@ -71,7 +71,11 @@ export const AicteDashboard: React.FC = () => {
       header: 'AICTE Permanent ID',
       accessorKey: 'aicte_id',
       sortable: true,
-      cell: (row) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{row.aicte_id}</span>
+      cell: (row) => (
+        <span className="font-mono font-semibold text-xs text-sky-600 dark:text-sky-400">
+          {row.aicte_id}
+        </span>
+      )
     },
     {
       header: 'Institution Name',
@@ -79,8 +83,12 @@ export const AicteDashboard: React.FC = () => {
       sortable: true,
       cell: (row) => (
         <div>
-          <div style={{ fontWeight: 600, color: '#1e293b' }}>{row.name}</div>
-          <div style={{ fontSize: '11px', color: '#64748b' }}>{row.state} ({row.region} Region)</div>
+          <div className="font-semibold text-zinc-950 dark:text-white tracking-tight">
+            {row.name}
+          </div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            {row.state} • <span className="font-mono">{row.region} Region</span>
+          </div>
         </div>
       )
     },
@@ -92,10 +100,10 @@ export const AicteDashboard: React.FC = () => {
         const isExceeded = row.total_enrolled > row.total_approved_intake * 1.15;
         return (
           <div>
-            <div style={{ fontWeight: 600, color: isExceeded ? '#dc2626' : '#1e293b' }}>
-              {row.total_enrolled} / {row.total_approved_intake} ({pct}%)
+            <div className={`font-mono font-bold text-xs ${isExceeded ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-900 dark:text-zinc-100'}`}>
+              {row.total_enrolled.toLocaleString()} / {row.total_approved_intake.toLocaleString()} ({pct}%)
             </div>
-            <div style={{ fontSize: '11px', color: isExceeded ? '#dc2626' : '#64748b' }}>
+            <div className={`text-[11px] mt-0.5 ${isExceeded ? 'text-rose-500 font-medium' : 'text-zinc-400 dark:text-zinc-500'}`}>
               {isExceeded ? 'Ceiling Exceeded' : 'Within Approved Capacity'}
             </div>
           </div>
@@ -107,7 +115,7 @@ export const AicteDashboard: React.FC = () => {
       accessorKey: 'unconfirmed_rate',
       sortable: true,
       cell: (row) => (
-        <span style={{ color: row.unconfirmed_rate > 35 ? '#b45309' : '#1e293b', fontWeight: row.unconfirmed_rate > 35 ? 700 : 400 }}>
+        <span className={`font-mono font-semibold text-xs ${row.unconfirmed_rate > 35 ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
           {row.unconfirmed_rate}%
         </span>
       )
@@ -118,11 +126,11 @@ export const AicteDashboard: React.FC = () => {
       sortable: true,
       cell: (row) => {
         const score = row.review_score;
-        const color = score >= 60 ? '#dc2626' : score >= 35 ? '#d97706' : '#15803d';
+        const colorClass = score >= 60 ? 'text-rose-600 dark:text-rose-400' : score >= 35 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400';
         return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontWeight: 700, color, fontSize: '14px' }}>{score}</span>
-            <span style={{ fontSize: '10px', color: '#64748b' }}>/ 100</span>
+          <div className="flex items-baseline gap-1 font-mono">
+            <span className={`font-bold text-sm ${colorClass}`}>{score}</span>
+            <span className="text-[10px] text-zinc-400 dark:text-zinc-500">/ 100</span>
           </div>
         );
       }
@@ -136,21 +144,21 @@ export const AicteDashboard: React.FC = () => {
     {
       header: 'Audit Action',
       cell: (row) => (
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => navigate(`/review-flags?inst=${row.id}`)}
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold transition-colors"
             title="Inspect Review Flags & Fraud Graph"
           >
-            <ShieldAlert size={12} />
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
             <span>Flags</span>
           </button>
           <button
             onClick={() => navigate(`/students?inst=${row.id}`)}
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#1f2128] text-xs font-semibold transition-colors"
             title="View Enrolment Records"
           >
-            <Eye size={12} />
+            <Eye className="w-3.5 h-3.5 text-zinc-400" />
             <span>Records</span>
           </button>
         </div>
@@ -167,16 +175,19 @@ export const AicteDashboard: React.FC = () => {
   }));
 
   return (
-    <div className="main-content-wrapper">
-      <div className="page-header-row">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80 gap-3">
         <div>
-          <h1 className="page-title">National Institutional Oversight Dashboard</h1>
-          <p className="page-subtitle">
-            All India Council for Technical Education — Real-Time APAAR Verification & Intake Ledger
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight font-display">
+            National Institutional Oversight
+          </h1>
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+            All India Council for Technical Education • Real-Time APAAR Verification & Intake Ledger
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="user-badge" style={{ backgroundColor: '#1b2a49' }}>
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 dark:bg-[#16181d] border border-zinc-200 dark:border-zinc-800 text-xs font-medium text-zinc-700 dark:text-zinc-300 font-mono">
             Jurisdiction: {user?.region || 'All India Central'}
           </span>
         </div>
@@ -184,68 +195,70 @@ export const AicteDashboard: React.FC = () => {
 
       {/* Statutory Advisory Notice */}
       <div className="statutory-alert-box">
-        <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-        <div>
-          <strong>Statutory Compliance Oversight:</strong> Intake ceilings and quota distributions are audited against the versioned Approval Process Handbook (APH 2025-26). All review scores are advisory indicators for official inspection and do not constitute a final judicial finding.
+        <AlertCircle className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+        <div className="text-xs sm:text-sm leading-relaxed">
+          <strong className="font-semibold text-zinc-950 dark:text-white">Statutory Compliance Oversight:</strong> Intake ceilings and quota distributions are audited against the versioned Approval Process Handbook (APH 2025-26). All review scores are advisory indicators for official inspection and do not constitute a final judicial finding.
         </div>
       </div>
 
       {/* Key Metric Cards */}
       {stats && (
-        <div className="metric-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard
             title="Monitored Institutions"
             value={stats.total_institutions}
             subtext="AICTE Approved Polytechnic & Engineering"
-            indicatorColor="#0f4c81"
           />
           <StatCard
             title="National Approved Intake"
             value={stats.total_approved_intake.toLocaleString()}
             subtext="Approved regular capacity"
-            indicatorColor="#0f4c81"
           />
           <StatCard
             title="Enrolled Admissions"
             value={stats.total_admissions.toLocaleString()}
-            subtext={`${stats.national_intake_utilisation_pct}% National Intake Utilisation`}
-            indicatorColor="#e65100"
+            subtext={`${stats.national_intake_utilisation_pct}% Intake Utilisation`}
+            trend={`${stats.national_intake_utilisation_pct}%`}
+            isPositive={stats.national_intake_utilisation_pct <= 100}
           />
           <StatCard
             title="Two-Key Pending / Disputed"
             value={`${stats.total_unconfirmed} / ${stats.total_disputed}`}
             subtext="Student confirmation grace period"
-            indicatorColor="#d97706"
+            trend={stats.total_disputed > 0 ? `${stats.total_disputed} disputed` : undefined}
+            isPositive={stats.total_disputed === 0}
           />
           <StatCard
             title="Flagged for Official Review"
             value={stats.flagged_institutions_count}
             subtext="Over-intake or contact clustering"
-            indicatorColor="#dc2626"
+            trend={stats.flagged_institutions_count > 0 ? 'Action required' : 'Clear'}
+            isPositive={stats.flagged_institutions_count === 0}
           />
         </div>
       )}
 
       {/* Intake vs Admission Chart */}
       {chartData.length > 0 && (
-        <IntakeBarChart
-          data={chartData}
-          title="Sample Institutional Intake vs Actual Admissions (Regular & Supernumerary)"
-        />
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+          <IntakeBarChart
+            data={chartData}
+            title="Sample Institutional Intake vs Actual Admissions (Regular & Supernumerary)"
+          />
+        </div>
       )}
 
       {/* Filter Toolbar */}
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Filter size={14} color="#64748b" />
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Filter By:</span>
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+          <Filter className="w-3.5 h-3.5" />
+          <span>Filters:</span>
         </div>
 
         <select
           value={selectedState}
           onChange={e => setSelectedState(e.target.value)}
-          className="form-select"
-          style={{ width: '180px', fontSize: '12px' }}
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
         >
           <option value="">All States / UTs</option>
           <option value="Maharashtra">Maharashtra</option>
@@ -261,8 +274,7 @@ export const AicteDashboard: React.FC = () => {
         <select
           value={selectedStatus}
           onChange={e => setSelectedStatus(e.target.value)}
-          className="form-select"
-          style={{ width: '170px', fontSize: '12px' }}
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
         >
           <option value="">All Statuses</option>
           <option value="COMPLIANT">Compliant</option>

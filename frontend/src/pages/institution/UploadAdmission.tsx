@@ -148,29 +148,24 @@ export const UploadAdmission: React.FC = () => {
       )}
 
       {/* Mode Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #cbd5e1', marginBottom: '16px' }}>
+      <div className="flex border-b border-zinc-200 dark:border-zinc-800 gap-6 mb-5">
         <button
           onClick={() => { setActiveTab('csv'); setDryRunResult(null); }}
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'csv' ? '#0f4c81' : 'transparent',
-            color: activeTab === 'csv' ? '#ffffff' : '#475569',
-            borderRadius: '2px 2px 0 0',
-            borderBottom: 'none'
-          }}
+          className={`pb-3 text-sm font-semibold transition-colors border-b-2 -mb-px flex items-center gap-2 ${
+            activeTab === 'csv'
+              ? 'border-zinc-950 dark:border-white text-zinc-950 dark:text-white'
+              : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+          }`}
         >
           Spreadsheet / CSV Batch Upload
         </button>
         <button
           onClick={() => { setActiveTab('single'); setDryRunResult(null); }}
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'single' ? '#0f4c81' : 'transparent',
-            color: activeTab === 'single' ? '#ffffff' : '#475569',
-            borderRadius: '2px 2px 0 0',
-            borderBottom: 'none',
-            marginLeft: '4px'
-          }}
+          className={`pb-3 text-sm font-semibold transition-colors border-b-2 -mb-px flex items-center gap-2 ${
+            activeTab === 'single'
+              ? 'border-zinc-950 dark:border-white text-zinc-950 dark:text-white'
+              : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+          }`}
         >
           Single Record Form
         </button>
@@ -178,9 +173,9 @@ export const UploadAdmission: React.FC = () => {
 
       {/* CSV Batch Upload View */}
       {activeTab === 'csv' && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '20px', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <label className="form-label" style={{ marginBottom: 0 }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-xs transition-colors mb-5">
+          <div className="flex justify-between items-center mb-3">
+            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider font-display">
               Paste CSV Content or Load Evaluator Demonstration Template:
             </label>
             <button onClick={loadSampleBatch} className="btn btn-secondary btn-sm">
@@ -212,7 +207,7 @@ export const UploadAdmission: React.FC = () => {
 
       {/* Single Record Form View */}
       {activeTab === 'single' && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '20px', marginBottom: '20px' }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-xs transition-colors mb-5">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
             
             <div className="form-group">
@@ -367,14 +362,14 @@ export const UploadAdmission: React.FC = () => {
 
       {/* Dry-Run Validation Findings Drawer */}
       {dryRunResult && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '20px', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-xs transition-colors mb-5">
+          <div className="flex justify-between items-center mb-4 pb-3 border-b border-zinc-100 dark:border-zinc-800/60 flex-wrap gap-3">
             <div>
-              <h2 style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+              <h2 className="text-base font-bold text-zinc-950 dark:text-white font-display">
                 Dry-Run Validation Report
               </h2>
-              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
-                Total Processed: {dryRunResult.total_rows} | Valid: {dryRunResult.valid_rows} | Warnings: {dryRunResult.warning_rows} | Blocking Errors: {dryRunResult.invalid_rows}
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Total Processed: <span className="font-mono">{dryRunResult.total_rows}</span> • Valid: <span className="font-mono">{dryRunResult.valid_rows}</span> • Warnings: <span className="font-mono">{dryRunResult.warning_rows}</span> • Blocking Errors: <span className="font-mono">{dryRunResult.invalid_rows}</span>
               </div>
             </div>
 

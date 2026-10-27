@@ -4,13 +4,13 @@ import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { StatCard } from '../../components/common/StatCard';
 import { StatusBadge } from '../../components/common/StatusBadge';
-import { Upload, Users, AlertTriangle, CheckCircle, Clock, ShieldCheck } from 'lucide-react';
+import { Upload, AlertTriangle, Users, BookOpen, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export const InstitutionDashboard: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [institution, setInstitution] = useState<any>(null);
+  const [institution, setInstitution] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,10 +18,9 @@ export const InstitutionDashboard: React.FC = () => {
   }, [user]);
 
   const fetchInstitutionData = async () => {
-    if (!user?.institution_id) return;
     setLoading(true);
     try {
-      const res = await api.get(`/institutions/${user.institution_id}`);
+      const res = await api.get('/institutions/current');
       setInstitution(res.data);
     } catch (err) {
       console.error('Failed to load institution profile:', err);
@@ -30,51 +29,74 @@ export const InstitutionDashboard: React.FC = () => {
     }
   };
 
-  if (!institution) {
+  if (loading) {
     return (
-      <div className="main-content-wrapper">
-        <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
-          Loading institution profile and intake status...
-        </div>
+      <div className="py-20 text-center text-zinc-400 dark:text-zinc-500 font-mono text-sm">
+        Loading institutional compliance records...
       </div>
     );
   }
 
-  const totalIntake = institution.total_approved_intake;
-  const totalEnrolled = institution.total_enrolled;
+  if (!institution) {
+    return (
+      <div className="statutory-alert-box danger text-xs">
+        No institution record found associated with this nodal officer account.
+      </div>
+    );
+  }
+
+  const totalIntake = institution.programmes.reduce((acc: number, p: any) => acc + p.approved_intake, 0);
+  const totalEnrolled = institution.programmes.reduce((acc: number, p: any) => acc + p.enrolled_count, 0);
   const utilPercent = totalIntake ? Math.round((totalEnrolled / totalIntake) * 100) : 0;
   const isOverIntake = totalEnrolled > totalIntake * 1.15;
 
   return (
-    <div className="main-content-wrapper">
-      <div className="page-header-row">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80 gap-3">
         <div>
-          <h1 className="page-title">{institution.name}</h1>
-          <p className="page-subtitle">
-            AICTE Permanent Institute ID: {institution.aicte_id} | State: {institution.state} ({institution.region} Region)
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight font-display">
+            {institution.name}
+          </h1>
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+            AICTE ID: <span className="font-mono text-sky-600 dark:text-sky-400 font-semibold">{institution.aicte_id}</span> • State: {institution.state} ({institution.region} Region)
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => navigate('/upload-admissions')} className="btn btn-primary">
-            <Upload size={14} />
+        <div>
+          <button
+            onClick={() => navigate('/upload-admissions')}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:opacity-90 shadow-xs"
+          >
+            <Upload className="w-4 h-4" />
             <span>Upload New Admissions</span>
           </button>
         </div>
       </div>
 
       {/* Institutional Compliance Status Banner */}
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Nodal Officer</div>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>{institution.nodal_officer_name}</div>
-            <div style={{ fontSize: '12px', color: '#475569' }}>{institution.nodal_officer_email} | Contact: {institution.nodal_officer_phone_masked}</div>
+            <div className="text-[11px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-semibold font-display">
+              Nodal Officer
+            </div>
+            <div className="text-base font-bold text-zinc-950 dark:text-white font-display mt-0.5">
+              {institution.nodal_officer_name}
+            </div>
+            <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+              {institution.nodal_officer_email} • Contact: <span className="font-mono">{institution.nodal_officer_phone_masked}</span>
+            </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '11px', color: '#64748b' }}>Institutional Review Score</div>
-              <div style={{ fontSize: '22px', fontWeight: 800, color: institution.review_score >= 60 ? '#dc2626' : institution.review_score >= 35 ? '#d97706' : '#15803d' }}>
-                {institution.review_score} / 100
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-[11px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-semibold">
+                Review Score
+              </div>
+              <div className="text-2xl font-bold font-mono tracking-tight text-zinc-950 dark:text-white">
+                <span className={institution.review_score >= 60 ? 'text-rose-600 dark:text-rose-400' : institution.review_score >= 35 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}>
+                  {institution.review_score}
+                </span>
+                <span className="text-xs text-zinc-400 dark:text-zinc-500 font-normal ml-1">/ 100</span>
               </div>
             </div>
             <StatusBadge label={institution.status.replace(/_/g, ' ')} code={institution.status} />
@@ -83,59 +105,59 @@ export const InstitutionDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Row */}
-      <div className="metric-grid">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Approved Regular Intake"
-          value={totalIntake}
+          value={totalIntake.toLocaleString()}
           subtext="Approved by AICTE Council"
-          indicatorColor="#0f4c81"
         />
         <StatCard
           title="Enrolled Admissions"
-          value={totalEnrolled}
+          value={totalEnrolled.toLocaleString()}
           subtext={`${utilPercent}% Intake Utilisation`}
-          indicatorColor={isOverIntake ? '#dc2626' : '#15803d'}
+          trend={`${utilPercent}%`}
+          isPositive={!isOverIntake}
         />
         <StatCard
-          title="Unconfirmed by Student"
+          title="Unconfirmed Rate"
           value={`${institution.unconfirmed_rate}%`}
           subtext="Two-Key Confirmation Grace Period"
-          indicatorColor="#d97706"
+          trend={institution.unconfirmed_rate > 30 ? 'Scrutiny' : 'Normal'}
+          isPositive={institution.unconfirmed_rate <= 30}
         />
         <StatCard
           title="Active Programmes"
           value={institution.programmes.length}
-          subtext="UG / PG Courses"
-          indicatorColor="#0f4c81"
+          subtext="Approved UG / PG Courses"
         />
       </div>
 
       {/* Programme Breakdown Table */}
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1 pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
+          <h2 className="text-sm font-bold text-zinc-950 dark:text-white font-display tracking-tight">
             Departmental Intake Quota Allocation & Supernumerary Limits
           </h2>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500">
             Audited under AICTE Approval Process Handbook (2025-26)
           </span>
         </div>
 
-        <div className="data-table-container">
-          <table className="gov-table">
-            <thead>
+        <div className="overflow-x-auto rounded-xl border border-zinc-200/60 dark:border-zinc-800/60">
+          <table className="w-full text-left text-xs">
+            <thead className="border-b border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50 dark:bg-[#121316] text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold text-[11px]">
               <tr>
-                <th>Programme / Level</th>
-                <th>Course Name</th>
-                <th>Approved Intake</th>
-                <th>Supernumerary Permitted</th>
-                <th>Actual Enrolled</th>
-                <th>Unconfirmed</th>
-                <th>Accreditation</th>
-                <th>Capacity Headroom</th>
+                <th className="px-4 py-3">Programme / Level</th>
+                <th className="px-4 py-3">Course Name</th>
+                <th className="px-4 py-3">Approved Intake</th>
+                <th className="px-4 py-3">Supernumerary Limit</th>
+                <th className="px-4 py-3">Actual Enrolled</th>
+                <th className="px-4 py-3">Unconfirmed</th>
+                <th className="px-4 py-3">Accreditation</th>
+                <th className="px-4 py-3">Capacity Headroom</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-zinc-800 dark:text-zinc-200 font-normal">
               {institution.programmes.map((p: any) => {
                 const superPermitted = Math.floor(p.approved_intake * (p.supernumerary_cap_percent / 100));
                 const totalCeiling = p.approved_intake + superPermitted;
@@ -143,22 +165,27 @@ export const InstitutionDashboard: React.FC = () => {
                 const isOver = headroom < 0;
 
                 return (
-                  <tr key={p.id}>
-                    <td><span className="status-badge slate">{p.level}</span> {p.programme_name}</td>
-                    <td style={{ fontWeight: 600 }}>{p.course_name}</td>
-                    <td>{p.approved_intake}</td>
-                    <td>+{superPermitted} ({p.supernumerary_cap_percent}%)</td>
-                    <td style={{ fontWeight: 700, color: isOver ? '#dc2626' : '#1e293b' }}>
+                  <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-[#1f2128] transition-colors">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className="status-badge slate text-[10px] mr-1.5">{p.level}</span>
+                      <span className="font-medium text-zinc-900 dark:text-zinc-100">{p.programme_name}</span>
+                    </td>
+                    <td className="px-4 py-3 font-semibold text-zinc-950 dark:text-white whitespace-nowrap">{p.course_name}</td>
+                    <td className="px-4 py-3 font-mono tabular-nums">{p.approved_intake}</td>
+                    <td className="px-4 py-3 font-mono tabular-nums text-zinc-500 dark:text-zinc-400">
+                      +{superPermitted} ({p.supernumerary_cap_percent}%)
+                    </td>
+                    <td className={`px-4 py-3 font-mono font-bold tabular-nums ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-950 dark:text-white'}`}>
                       {p.enrolled_count}
                     </td>
-                    <td style={{ color: p.unconfirmed_count > 0 ? '#b45309' : '#1e293b' }}>
+                    <td className={`px-4 py-3 font-mono tabular-nums ${p.unconfirmed_count > 0 ? 'text-amber-600 dark:text-amber-400 font-semibold' : 'text-zinc-500'}`}>
                       {p.unconfirmed_count}
                     </td>
-                    <td>
+                    <td className="px-4 py-3 whitespace-nowrap">
                       <StatusBadge label={p.is_nba_accredited ? 'NBA Accredited' : 'Non-Accredited'} variant={p.is_nba_accredited ? 'green' : 'slate'} />
                     </td>
-                    <td>
-                      <span style={{ fontWeight: 700, color: isOver ? '#dc2626' : '#15803d' }}>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`font-mono text-xs font-semibold ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                         {isOver ? `Ceiling Breached (${headroom})` : `${headroom} seats available`}
                       </span>
                     </td>
@@ -171,29 +198,35 @@ export const InstitutionDashboard: React.FC = () => {
       </div>
 
       {/* Action Shortcut Banners */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div
           onClick={() => navigate('/discrepancies')}
-          style={{ border: '1px solid #cbd5e1', padding: '16px', borderRadius: '4px', backgroundColor: '#ffffff', cursor: 'pointer' }}
+          className="group p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-[#16181d] hover:border-zinc-400 dark:hover:border-zinc-600 cursor-pointer transition-all shadow-xs"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#b45309', fontWeight: 700, fontSize: '13px' }}>
-            <AlertTriangle size={16} />
-            <span>Discrepancy Resolution Queue</span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm font-display">
+              <AlertTriangle className="w-4 h-4" />
+              <span>Discrepancy Resolution Queue</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
           </div>
-          <p style={{ fontSize: '12px', color: '#475569', marginTop: '4px' }}>
-            Review pending name transliterations and DOB mismatches requiring Nodal Officer validation.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            Review pending phonetic Hindi-English transliterations and DOB mismatches requiring Nodal Officer validation.
           </p>
         </div>
 
         <div
           onClick={() => navigate('/students')}
-          style={{ border: '1px solid #cbd5e1', padding: '16px', borderRadius: '4px', backgroundColor: '#ffffff', cursor: 'pointer' }}
+          className="group p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-[#16181d] hover:border-zinc-400 dark:hover:border-zinc-600 cursor-pointer transition-all shadow-xs"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#0f4c81', fontWeight: 700, fontSize: '13px' }}>
-            <Users size={16} />
-            <span>Search & Manage Enrolment Records</span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-sky-600 dark:text-sky-400 font-bold text-sm font-display">
+              <Users className="w-4 h-4" />
+              <span>Search & Manage Enrolment Records</span>
+            </div>
+            <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
           </div>
-          <p style={{ fontSize: '12px', color: '#475569', marginTop: '4px' }}>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
             Inspect active APAAR IDs, Two-Key confirmation timestamps, and generate student verification tokens.
           </p>
         </div>

@@ -3,12 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PortalSettingsProvider } from './context/PortalSettingsContext';
 
-// Layout
-import { TopUtilityBar } from './components/layout/TopUtilityBar';
-import { PortalHeader } from './components/layout/PortalHeader';
-import { Navigation } from './components/layout/Navigation';
+// Master Layout Architecture Components
+import { Sidebar } from './components/layout/Sidebar';
+import { FloatingPillHeader } from './components/layout/FloatingPillHeader';
 import { Breadcrumbs } from './components/layout/Breadcrumbs';
-import { PortalFooter } from './components/layout/PortalFooter';
 
 // Pages
 import { Login } from './pages/Login';
@@ -35,16 +33,22 @@ const HomeRedirect: React.FC = () => {
 
 const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <>
-      <TopUtilityBar />
-      <PortalHeader />
-      <Navigation />
-      <Breadcrumbs />
-      <main id="main-content">
-        {children}
-      </main>
-      <PortalFooter />
-    </>
+    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0d0e11] text-zinc-900 dark:text-zinc-100 flex transition-colors duration-200">
+      {/* 1. Docked Full-Height Sidebar */}
+      <Sidebar />
+
+      {/* 2. Main Content Viewport with Ambient Micro-Dot Pattern */}
+      <div className="flex-1 flex flex-col min-w-0 bg-dots-light dark:bg-dots-dark">
+        {/* Floating Pill Topbar */}
+        <FloatingPillHeader />
+
+        {/* Dynamic Page Viewport */}
+        <main id="main-content" className="flex-1 px-4 sm:px-6 lg:px-8 py-5 max-w-7xl w-full mx-auto space-y-4">
+          <Breadcrumbs />
+          {children}
+        </main>
+      </div>
+    </div>
   );
 };
 
@@ -57,7 +61,7 @@ export const App: React.FC = () => {
             {/* Standalone Mobile-Optimized Two-Key Confirmation Screen */}
             <Route path="/confirm-admission/:token" element={<StudentConfirm />} />
 
-            {/* Standard Portal Pages with GIGW Government Layout */}
+            {/* Standard Portal Pages with Master Enterprise Minimalist Layout */}
             <Route
               path="/login"
               element={

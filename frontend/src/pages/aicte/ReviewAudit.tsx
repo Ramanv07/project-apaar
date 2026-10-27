@@ -259,26 +259,26 @@ export const ReviewAudit: React.FC = () => {
 
       {/* Institution Review Score Header */}
       {reviewScore && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px', marginBottom: '18px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors mb-5">
+          <div className="flex justify-between items-center flex-wrap gap-4">
             <div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Inspected Institution:</div>
-              <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>
+              <div className="text-xs text-zinc-400 dark:text-zinc-500 font-display">Inspected Institution:</div>
+              <h2 className="text-lg font-bold text-zinc-950 dark:text-white font-display">
                 {reviewScore.institution_name}
               </h2>
-              <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>
-                State: {reviewScore.state} | Monitored Admissions: {reviewScore.metrics?.total_admissions} | Unconfirmed: {reviewScore.metrics?.unconfirmed_count} ({reviewScore.metrics?.unconfirmed_rate}%)
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                State: {reviewScore.state} • Monitored Admissions: <span className="font-mono">{reviewScore.metrics?.total_admissions}</span> • Unconfirmed: <span className="font-mono">{reviewScore.metrics?.unconfirmed_count} ({reviewScore.metrics?.unconfirmed_rate}%)</span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>Review Score</div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'flex-end' }}>
-                  <span style={{ fontSize: '32px', fontWeight: 800, color: reviewScore.review_score >= 60 ? '#dc2626' : reviewScore.review_score >= 35 ? '#d97706' : '#15803d' }}>
+            <div className="flex items-center gap-5">
+              <div className="text-right">
+                <div className="text-[11px] text-zinc-400 dark:text-zinc-500 uppercase tracking-wider font-semibold font-display">Review Score</div>
+                <div className="flex items-baseline gap-1 justify-end font-mono">
+                  <span className={`text-3xl font-extrabold ${reviewScore.review_score >= 60 ? 'text-rose-600 dark:text-rose-400' : reviewScore.review_score >= 35 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                     {reviewScore.review_score}
                   </span>
-                  <span style={{ fontSize: '14px', color: '#64748b' }}>/ 100</span>
+                  <span className="text-xs text-zinc-400 dark:text-zinc-500">/ 100</span>
                 </div>
               </div>
               <StatusBadge label={reviewScore.status.replace(/_/g, ' ')} code={reviewScore.status} />
@@ -353,20 +353,20 @@ export const ReviewAudit: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '18px' }}>
           
           {/* Canvas Graph View */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '14px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>
+          <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+            <div className="flex justify-between items-center mb-3">
+              <div className="text-xs font-bold text-zinc-950 dark:text-white font-display">
                 Contact Identifier Linkage Network
               </div>
-              <div style={{ display: 'flex', gap: '10px', fontSize: '11px', color: '#64748b' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '10px', height: '10px', backgroundColor: '#1b2a49', borderRadius: '50%' }} /> Institution
+              <div className="flex gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 bg-zinc-800 dark:bg-zinc-400 rounded-full" /> Institution
                 </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '10px', height: '10px', backgroundColor: '#dc2626', borderRadius: '50%' }} /> Shared Contact
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 bg-rose-500 rounded-full" /> Shared Contact
                 </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ width: '10px', height: '10px', backgroundColor: '#0f4c81', borderRadius: '50%' }} /> Student
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 bg-sky-500 rounded-full" /> Student
                 </span>
               </div>
             </div>
@@ -375,16 +375,16 @@ export const ReviewAudit: React.FC = () => {
               ref={canvasRef}
               width={650}
               height={440}
-              style={{ width: '100%', height: '440px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '2px' }}
+              className="w-full h-[440px] bg-zinc-50 dark:bg-[#111215] border border-zinc-200 dark:border-zinc-800 rounded-xl"
             />
-            <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px' }}>
+            <div className="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2">
               Red edges denote shared phone/email hashes connecting separate student admission records.
             </div>
           </div>
 
           {/* Right Side Panel: Evidence Drawer */}
-          <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '10px', borderBottom: '1px solid #e2e8f0', paddingBottom: '6px' }}>
+          <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+            <div className="text-xs font-bold text-zinc-950 dark:text-white font-display mb-3 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
               Evidence Behind Flag: Contact Clusters
             </div>
 
@@ -453,17 +453,17 @@ export const ReviewAudit: React.FC = () => {
 
       {/* Tab 2: State Allotment Reconciliation List */}
       {activeTab === 'allotment' && allotmentData && (
-        <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+          <div className="flex justify-between items-center mb-4 pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
             <div>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+              <h3 className="text-sm font-bold text-zinc-950 dark:text-white font-display">
                 State Centralised Merit Allotment Reconciliation
               </h3>
-              <p style={{ fontSize: '12px', color: '#64748b' }}>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                 Verification of State Quota, TFW, and EWS seats against mock state merit counseling registry.
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className="flex gap-2.5">
               <span className="status-badge red">
                 Unreconciled Quota Seats: {allotmentData.unreconciled_count}
               </span>

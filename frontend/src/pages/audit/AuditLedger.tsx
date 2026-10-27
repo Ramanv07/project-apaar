@@ -64,7 +64,7 @@ export const AuditLedger: React.FC = () => {
   const fetchConsentRecords = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/audit/consent', { params: { limit: '150' } });
+      const res = await api.get('/audit/consent-ledger', { params: { limit: '150' } });
       setConsentRecords(res.data);
     } catch (err) {
       console.error('Failed to load consent ledger:', err);
@@ -74,35 +74,39 @@ export const AuditLedger: React.FC = () => {
   };
 
   const handleRevokeConsent = async (consentId: string) => {
-    if (!confirm("Are you sure you wish to revoke consent for this purpose? Third-party verifiers will no longer have access.")) return;
+    if (!window.confirm('Revoke active verification consent for this citizen record? Future public queries will be blocked.')) {
+      return;
+    }
     try {
-      await api.post(`/audit/consent/revoke/${consentId}`);
-      fetchConsentRecords();
-    } catch (err: any) {
-      alert("Revocation failed: " + (err.response?.data?.detail || err.message));
+      await api.post(`/audit/revoke-consent/${consentId}`);
+      await fetchConsentRecords();
+    } catch (err) {
+      console.error('Failed to revoke consent:', err);
     }
   };
 
   const auditColumns: Column<AuditLog>[] = [
     {
-      header: 'Audit ID & Time (UTC)',
-      accessorKey: 'timestamp',
+      header: 'Audit ID & Time',
       sortable: true,
       cell: (r) => (
         <div>
-          <div style={{ fontFamily: 'monospace', fontWeight: 600 }}>#{r.id}</div>
-          <div style={{ fontSize: '11px', color: '#64748b' }}>{new Date(r.timestamp).toLocaleString()}</div>
+          <span className="font-mono text-xs text-zinc-900 dark:text-zinc-100 block">
+            {new Date(r.timestamp).toLocaleString()}
+          </span>
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono">
+            LOG-#{r.id}
+          </span>
         </div>
       )
     },
     {
-      header: 'Actor & Role',
-      accessorKey: 'username',
+      header: 'Actor & Identity',
       sortable: true,
       cell: (r) => (
         <div>
-          <div style={{ fontWeight: 600 }}>{r.username}</div>
-          <div style={{ fontSize: '11px', color: '#0f4c81' }}>{r.role}</div>
+          <div className="font-semibold text-zinc-950 dark:text-white">{r.username}</div>
+          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">{r.role.replace(/_/g, ' ')}</div>
         </div>
       )
     },
@@ -110,28 +114,38 @@ export const AuditLedger: React.FC = () => {
       header: 'Statutory Action',
       accessorKey: 'action',
       sortable: true,
-      cell: (r) => <span className="status-badge blue">{r.action}</span>
+      cell: (r) => (
+        <span className="font-mono text-xs font-semibold text-sky-600 dark:text-sky-400">
+          {r.action}
+        </span>
+      )
     },
     {
-      header: 'Entity / Target',
+      header: 'Entity Impacted',
+      sortable: true,
       cell: (r) => (
         <div>
-          <span style={{ fontSize: '11px', color: '#64748b' }}>{r.entity_type}:</span>{' '}
-          <code style={{ fontSize: '11px' }}>{r.entity_id}</code>
+          <span className="status-badge slate text-[10px] mr-1">{r.entity_type}</span>
+          <span className="font-mono text-xs text-zinc-800 dark:text-zinc-200">{r.entity_id}</span>
         </div>
       )
     },
     {
       header: 'IP Address',
       accessorKey: 'ip_address',
-      cell: (r) => <span style={{ fontFamily: 'monospace', fontSize: '11px' }}>{r.ip_address}</span>
+      sortable: true,
+      cell: (r) => (
+        <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+          {r.ip_address}
+        </span>
+      )
     },
     {
-      header: 'Audit Payload',
+      header: 'Audit Event Parameters',
       cell: (r) => (
-        <pre style={{ fontSize: '10px', background: '#f8fafc', padding: '4px', borderRadius: '2px', maxWidth: '280px', overflowX: 'auto', maxHeight: '60px' }}>
-          {JSON.stringify(r.details, null, 1)}
-        </pre>
+        <div className="max-w-md truncate font-mono text-[11px] text-zinc-600 dark:text-zinc-400">
+          {JSON.stringify(r.details)}
+        </div>
       )
     }
   ];
@@ -140,25 +154,38 @@ export const AuditLedger: React.FC = () => {
     {
       header: 'Consent ID',
       accessorKey: 'id',
-      cell: (r) => <span style={{ fontFamily: 'monospace', fontSize: '11px' }}>{r.id.slice(0, 12)}...</span>
+      sortable: true,
+      cell: (r) => (
+        <span className="font-mono text-xs text-sky-600 dark:text-sky-400 font-semibold">
+          {r.id.substring(0, 16)}...
+        </span>
+      )
     },
     {
-      header: 'Masked APAAR ID',
+      header: 'APAAR Citizen ID',
       accessorKey: 'apaar_id_masked',
       sortable: true,
-      cell: (r) => <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>{r.apaar_id_masked}</span>
+      cell: (r) => (
+        <span className="font-mono text-xs text-zinc-800 dark:text-zinc-200">
+          {r.apaar_id_masked}
+        </span>
+      )
     },
     {
       header: 'Record Ref',
       accessorKey: 'record_ref',
       sortable: true,
-      cell: (r) => <span style={{ fontWeight: 600 }}>{r.record_ref}</span>
+      cell: (r) => (
+        <span className="font-mono font-semibold text-xs text-zinc-950 dark:text-white">
+          {r.record_ref}
+        </span>
+      )
     },
     {
       header: 'Purpose Tag',
       accessorKey: 'purpose',
       sortable: true,
-      cell: (r) => <span className="status-badge slate">{r.purpose.replace(/_/g, ' ')}</span>
+      cell: (r) => <StatusBadge label={r.purpose.replace(/_/g, ' ')} variant="slate" />
     },
     {
       header: 'Status',
@@ -172,9 +199,9 @@ export const AuditLedger: React.FC = () => {
       sortable: true,
       cell: (r) => (
         <div>
-          <div style={{ fontSize: '12px' }}>{new Date(r.granted_at).toLocaleString()}</div>
+          <div className="font-mono text-xs text-zinc-800 dark:text-zinc-200">{new Date(r.granted_at).toLocaleString()}</div>
           {r.revoked_at && (
-            <div style={{ fontSize: '10px', color: '#dc2626' }}>Revoked: {new Date(r.revoked_at).toLocaleDateString()}</div>
+            <div className="text-[10px] text-rose-500 font-mono mt-0.5">Revoked: {new Date(r.revoked_at).toLocaleDateString()}</div>
           )}
         </div>
       )
@@ -185,125 +212,122 @@ export const AuditLedger: React.FC = () => {
         r.status === 'ACTIVE' ? (
           <button
             onClick={() => handleRevokeConsent(r.id)}
-            className="btn btn-secondary btn-sm"
-            style={{ color: '#dc2626', borderColor: '#fca5a5' }}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-rose-300 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/40 text-xs font-semibold transition-colors"
             title="Revoke academic verification consent"
           >
-            <Ban size={12} />
+            <Ban className="w-3.5 h-3.5" />
             <span>Revoke</span>
           </button>
         ) : (
-          <span style={{ fontSize: '11px', color: '#94a3b8' }}>Revoked</span>
+          <span className="text-[11px] text-zinc-400 font-mono">Revoked</span>
         )
       )
     }
   ];
 
   return (
-    <div className="main-content-wrapper">
-      <div className="page-header-row">
-        <div>
-          <h1 className="page-title">Statutory Audit Trail & Consent Ledger</h1>
-          <p className="page-subtitle">
-            Append-Only Regulatory Ledger and DPDP Purpose-Tagged Consent Register
-          </p>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="pb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 dark:text-white tracking-tight font-display">
+          Statutory Audit Trail & Consent Ledger
+        </h1>
+        <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
+          Append-Only Regulatory Ledger and DPDP Purpose-Tagged Consent Register
+        </p>
       </div>
 
       <div className="statutory-alert-box">
-        <ShieldCheck size={18} style={{ flexShrink: 0 }} />
-        <div>
-          <strong>Tamper-Evident Immutable Log:</strong> Every login attempt, batch upload, discrepancy resolution, "What-If" policy simulation, and third-party verification query is cryptographically appended to this statutory ledger.
+        <ShieldCheck className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+        <div className="text-xs sm:text-sm leading-relaxed">
+          <strong className="font-semibold text-zinc-950 dark:text-white">Tamper-Evident Immutable Log:</strong> Every login attempt, batch upload, discrepancy resolution, "What-If" policy simulation, and third-party verification query is cryptographically appended to this statutory ledger.
         </div>
       </div>
 
       {/* Mode Tabs */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #cbd5e1', marginBottom: '16px' }}>
+      <div className="flex border-b border-zinc-200 dark:border-zinc-800 gap-6">
         <button
           onClick={() => setActiveTab('audit')}
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'audit' ? '#0f4c81' : 'transparent',
-            color: activeTab === 'audit' ? '#ffffff' : '#475569',
-            borderRadius: '2px 2px 0 0',
-            borderBottom: 'none'
-          }}
+          className={`pb-3 text-sm font-semibold transition-colors border-b-2 -mb-px flex items-center gap-2 ${
+            activeTab === 'audit'
+              ? 'border-zinc-950 dark:border-white text-zinc-950 dark:text-white'
+              : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+          }`}
         >
-          Statutory Audit Logs
+          <FileText className="w-4 h-4" />
+          <span>Statutory Audit Logs</span>
         </button>
         <button
           onClick={() => setActiveTab('consent')}
-          className="btn"
-          style={{
-            backgroundColor: activeTab === 'consent' ? '#0f4c81' : 'transparent',
-            color: activeTab === 'consent' ? '#ffffff' : '#475569',
-            borderRadius: '2px 2px 0 0',
-            borderBottom: 'none',
-            marginLeft: '4px'
-          }}
+          className={`pb-3 text-sm font-semibold transition-colors border-b-2 -mb-px flex items-center gap-2 ${
+            activeTab === 'consent'
+              ? 'border-zinc-950 dark:border-white text-zinc-950 dark:text-white'
+              : 'border-transparent text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
+          }`}
         >
-          Purpose-Tagged Consent Ledger
+          <Lock className="w-4 h-4" />
+          <span>Purpose-Tagged Consent Ledger</span>
         </button>
       </div>
 
       {activeTab === 'audit' && (
-        <>
+        <div className="space-y-4">
           {/* Audit Filters */}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Filter size={14} color="#64748b" />
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#475569' }}>Filter:</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-display">
+              <Filter className="w-3.5 h-3.5" />
+              <span>Filters:</span>
             </div>
 
             <select
               value={actionFilter}
               onChange={e => setActionFilter(e.target.value)}
-              className="form-select"
-              style={{ width: '240px', fontSize: '12px' }}
+              className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
             >
-              <option value="">All Actions</option>
-              <option value="USER_LOGIN_SUCCESS">User Login</option>
-              <option value="UPLOAD_ADMISSION_BATCH">Upload Batch</option>
-              <option value="STUDENT_CONFIRM_ENROLMENT">Two-Key Confirmation</option>
-              <option value="RESOLVE_NAME_MISMATCH">Discrepancy Resolution</option>
-              <option value="SIMULATE_WHAT_IF_QUOTA">What-If Simulation</option>
-              <option value="VERIFY_CREDENTIAL_LOOKUP">Verifier Lookup</option>
+              <option value="">All Action Types</option>
+              <option value="LOGIN_SUCCESS">LOGIN_SUCCESS</option>
+              <option value="LOGIN_FAILED">LOGIN_FAILED</option>
+              <option value="ROLE_QUICK_SWITCH">ROLE_QUICK_SWITCH</option>
+              <option value="BATCH_ADMISSION_UPLOAD">BATCH_ADMISSION_UPLOAD</option>
+              <option value="DISCREPANCY_RESOLVED">DISCREPANCY_RESOLVED</option>
+              <option value="TWO_KEY_STUDENT_CONFIRM">TWO_KEY_STUDENT_CONFIRM</option>
+              <option value="POLICY_WHAT_IF_SIMULATION">POLICY_WHAT_IF_SIMULATION</option>
+              <option value="PUBLIC_CREDENTIAL_VERIFIED">PUBLIC_CREDENTIAL_VERIFIED</option>
             </select>
 
             <select
               value={roleFilter}
               onChange={e => setRoleFilter(e.target.value)}
-              className="form-select"
-              style={{ width: '200px', fontSize: '12px' }}
+              className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#111215] text-zinc-900 dark:text-zinc-100 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-sky-500 transition-colors"
             >
               <option value="">All Roles</option>
-              <option value="AICTE_ADMIN">AICTE Admin</option>
-              <option value="AICTE_REGIONAL_OFFICER">Regional Officer</option>
-              <option value="INSTITUTION_NODAL_OFFICER">Nodal Officer</option>
-              <option value="SYSTEM">System Automation</option>
+              <option value="AICTE_ADMIN">AICTE_ADMIN</option>
+              <option value="AICTE_REGIONAL_OFFICER">AICTE_REGIONAL_OFFICER</option>
+              <option value="INSTITUTION_NODAL_OFFICER">INSTITUTION_NODAL_OFFICER</option>
+              <option value="STUDENT">STUDENT</option>
+              <option value="PUBLIC_VERIFIER">PUBLIC_VERIFIER</option>
             </select>
           </div>
 
           <DataTable
             columns={auditColumns}
             data={auditLogs}
-            searchPlaceholder="Filter audit actions, usernames, or entity IDs..."
-            exportFilename="trustseat_statutory_audit_ledger"
-            pageSize={15}
+            searchPlaceholder="Search actor username, IP, action, or entity ID..."
+            exportFilename="aicte_statutory_audit_ledger"
+            pageSize={12}
           />
-        </>
+        </div>
       )}
 
       {activeTab === 'consent' && (
         <DataTable
           columns={consentColumns}
           data={consentRecords}
-          searchPlaceholder="Filter consent record reference, masked APAAR, or purpose..."
-          exportFilename="trustseat_consent_ledger"
-          pageSize={15}
+          searchPlaceholder="Search APAAR ID, record reference, or purpose..."
+          exportFilename="dpdp_student_consent_register"
+          pageSize={12}
         />
       )}
-
     </div>
   );
 };

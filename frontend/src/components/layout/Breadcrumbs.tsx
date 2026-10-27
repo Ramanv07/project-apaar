@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 const ROUTE_LABELS: Record<string, string> = {
-  'dashboard': 'National Dashboard',
+  'dashboard': 'Regulatory Dashboard',
   'institution-dashboard': 'Institution Overview',
   'upload-admissions': 'Upload Admissions',
   'students': 'Admission Records',
@@ -22,24 +23,30 @@ export const Breadcrumbs: React.FC = () => {
   if (pathnames.length === 0) return null;
 
   return (
-    <div className="breadcrumb-container" aria-label="Breadcrumb">
-      <Link to="/">Home</Link>
+    <nav className="flex items-center text-xs text-zinc-400 dark:text-zinc-500 py-1" aria-label="Breadcrumb">
+      <Link to="/" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+        Home
+      </Link>
       {pathnames.map((value, index) => {
         const to = `/${pathnames.slice(0, index + 1).join('/')}`;
         const isLast = index === pathnames.length - 1;
         const label = ROUTE_LABELS[value] || value;
 
         return (
-          <span key={to}>
-            <span style={{ margin: '0 6px', color: '#94a3b8' }}>/</span>
+          <React.Fragment key={to}>
+            <ChevronRight className="w-3 h-3 mx-1.5 text-zinc-400 dark:text-zinc-600 flex-shrink-0" />
             {isLast ? (
-              <span style={{ color: '#1e293b', fontWeight: 600 }}>{label}</span>
+              <span className="text-zinc-900 dark:text-zinc-200 font-medium truncate">
+                {label}
+              </span>
             ) : (
-              <Link to={to}>{label}</Link>
+              <Link to={to} className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors truncate">
+                {label}
+              </Link>
             )}
-          </span>
+          </React.Fragment>
         );
       })}
-    </div>
+    </nav>
   );
 };

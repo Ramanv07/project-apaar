@@ -66,12 +66,12 @@ export const DiscrepancyQueue: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '4px', padding: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>
+      <div className="bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-5 shadow-xs transition-colors">
+        <div className="flex justify-between items-center mb-4 pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
+          <h2 className="text-sm font-bold text-zinc-950 dark:text-white font-display">
             Pending Discrepancy Items ({items.length})
           </h2>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
+          <span className="text-xs text-zinc-400 dark:text-zinc-500">
             Action required by Institution Nodal Officer
           </span>
         </div>
