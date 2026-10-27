@@ -39,7 +39,7 @@ export const Login: React.FC = () => {
   return (
     <div className="w-full max-w-5xl mx-auto py-6 sm:py-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         {/* Left: Official Login Form */}
         <div className="lg:col-span-5 bg-white dark:bg-[#16181d] border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 sm:p-7 shadow-xs transition-colors">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
@@ -68,7 +68,7 @@ export const Login: React.FC = () => {
                 Official Username / AICTE ID
               </label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <User className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                 <input
                   id="username"
                   type="text"
@@ -85,7 +85,7 @@ export const Login: React.FC = () => {
                 Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+                <Lock className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
                 <input
                   id="password"
                   type="password"
@@ -127,7 +127,7 @@ export const Login: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            
+
             <div
               onClick={() => handleQuickRole('AICTE_ADMIN', '/dashboard')}
               className="group p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/70 dark:bg-[#111215] hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-[#1a1d23] cursor-pointer transition-all"
