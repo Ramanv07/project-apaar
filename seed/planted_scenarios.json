@@ -1,0 +1,86 @@
+{
+  "prototype": "TrustSeat",
+  "hackathon": "Smart India Hackathon 2026",
+  "problem_statement": "26263: APAAR ID-Based Student Data Management and Verification Platform for AICTE-Approved Institutions",
+  "synthetic_dataset_metrics": {
+    "institutions": 25,
+    "states": 8,
+    "programmes": 125,
+    "total_students": 6124
+  },
+  "planted_cases_for_evaluation": [
+    {
+      "case_id": 1,
+      "title": "40 Students Sharing Single Phone Hash in Meerut",
+      "institution_aicte_id": "1-10998877",
+      "institution_name": "Institute of Technology & Advanced Management, Meerut",
+      "shared_mobile_masked": "+91 ******3456",
+      "shared_cluster_size": 40,
+      "review_flag": "Shared Contact Identifier Cluster (HIGH)",
+      "review_score_impact": "Score elevated to 65+ (FLAGGED)",
+      "how_to_verify": "Navigate to 'Review Flags & Fraud Graph' tab, select ITAM Meerut from the dropdown, inspect the Red Cluster Node and click Cluster 1 in the side panel evidence drawer."
+    },
+    {
+      "case_id": 2,
+      "title": "Approved Intake Ceiling Breached in Pune",
+      "institution_aicte_id": "1-10492811",
+      "institution_name": "Apex Institute of Engineering & Applied Sciences, Pune",
+      "course": "B.Tech Computer Science & Engineering",
+      "approved_regular_intake": 120,
+      "supernumerary_cap_15pct": 18,
+      "statutory_ceiling": 138,
+      "actual_admitted": 146,
+      "how_to_verify": "Navigate to National Dashboard or Institution Dashboard for Apex Institute; observe 'Ceiling Exceeded' status and red intake utilisation indicator."
+    },
+    {
+      "case_id": 3,
+      "title": "Quota Admissions Missing from State Allotment List",
+      "institution_aicte_id": "1-10112233",
+      "institution_name": "Shri Ramswaroop Memorial Institute of Engineering, Lucknow",
+      "quota_type": "STATE_ALLOTMENT",
+      "unreconciled_apaar_prefix": "999...",
+      "unreconciled_count": 12,
+      "how_to_verify": "Navigate to 'Review Flags', select SRM Institute Lucknow, click 'State Allotment Reconciliation List' tab to view 12 unreconciled quota seats missing from merit counseling."
+    },
+    {
+      "case_id": 4,
+      "title": "Overlapping Active Enrolment in Two Institutions",
+      "student_name": "Rohan Manish Desai",
+      "apaar_id": "887766554433",
+      "institution_1": "Vidyavardhini College of Engineering, Vasai (Maharashtra)",
+      "institution_2": "Basaveshwar Technological Institute, Bagalkot (Karnataka)",
+      "academic_year": 2025,
+      "rule_violated": "OVERLAPPING_ACTIVE_ENROLMENT",
+      "how_to_verify": "Search for APAAR '887766554433' in 'Admission Records' or run Dry-Run validator with this APAAR ID to see concurrent active enrolment detection."
+    },
+    {
+      "case_id": 5,
+      "title": "Transliteration Variance vs Genuine Registry Mismatch",
+      "institution_aicte_id": "1-10928371",
+      "institution_name": "Vidyavardhini College of Engineering and Technology, Vasai",
+      "transliteration_case": {
+        "submitted_name": "Mohammed Tariq Khan",
+        "registry_name": "Mohd Tariq Khan",
+        "apaar_id": "445566778899",
+        "phonetic_similarity": "92.3%",
+        "outcome": "Marked WARNING, routed to Discrepancy Queue for Nodal Officer verification."
+      },
+      "genuine_mismatch_case": {
+        "submitted_name": "Sunita Roy",
+        "registry_name": "Sneha Roy",
+        "apaar_id": "112233445566",
+        "outcome": "Marked ERROR (Material identity mismatch)."
+      },
+      "how_to_verify": "Navigate to 'Discrepancy Queue' tab to view both records and execute nodal officer approval or rejection."
+    },
+    {
+      "case_id": 6,
+      "title": "120 Records Stuck as Unconfirmed in Odisha",
+      "institution_aicte_id": "1-10772199",
+      "institution_name": "Kalinga Institute of Engineering and Technology, Bhubaneswar",
+      "stuck_count": 120,
+      "status": "UNCONFIRMED_GRACE_PERIOD",
+      "how_to_verify": "Navigate to National Dashboard; Kalinga Institute displays an elevated unconfirmed rate (>38%) with statutory review advisory."
+    }
+  ]
+}

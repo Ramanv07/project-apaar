@@ -1,0 +1,39 @@
+{
+  "version_code": "AICTE-APH-2025-V2",
+  "handbook_name": "AICTE Approval Process Handbook 2025-26",
+  "effective_from": "2025-01-01",
+  "effective_to": null,
+  "description": "Revised Approval Process Handbook permitting 20% aggregate supernumerary ceiling and conditioned cascade of vacant FN/OCI seats to NRI in NBA accredited programmes.",
+  "intake_rules": {
+    "max_over_intake_percent": 0.0,
+    "supernumerary_cap_percent": 20.0,
+    "sub_quotas": {
+      "EWS": {
+        "cap_percent_of_intake": 10.0,
+        "is_supernumerary": true,
+        "requires_accreditation": false
+      },
+      "TFW": {
+        "cap_percent_of_intake": 5.0,
+        "is_supernumerary": true,
+        "requires_accreditation": false
+      },
+      "FN_OCI_CIWGC": {
+        "cap_percent_of_intake": 15.0,
+        "is_supernumerary": true,
+        "requires_accreditation": true
+      },
+      "NRI": {
+        "cap_percent_of_intake": 5.0,
+        "is_supernumerary": false,
+        "within_approved_intake": true,
+        "requires_accreditation": true
+      }
+    },
+    "cascade_rules": {
+      "allow_vacant_supernumerary_to_nri": true,
+      "allow_ciwgc_to_fn_cascade": true,
+      "max_cascaded_nri_seats": 5
+    }
+  }
+}
