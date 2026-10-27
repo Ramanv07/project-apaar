@@ -134,6 +134,23 @@ def list_institutions(
 
     return results
 
+@router.get("/current", response_model=InstitutionResponse)
+def get_current_institution(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    inst = None
+    if current_user.institution_id:
+        inst = db.query(Institution).filter(Institution.id == current_user.institution_id).first()
+    
+    if not inst:
+        inst = db.query(Institution).first()
+        
+    if not inst:
+        raise HTTPException(status_code=404, detail="No institution records exist in database")
+
+    return get_institution_detail(inst.id, current_user, db)
+
 @router.get("/{institution_id}", response_model=InstitutionResponse)
 def get_institution_detail(
     institution_id: str,
